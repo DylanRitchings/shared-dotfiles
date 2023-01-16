@@ -468,7 +468,7 @@ debugging scala
 ;;(after! get-buffer-create
 ;;(visual-line-mode))
 
-(add-hook! 'after-change-major-mode-hook 'visual-line-mode)
+(add-hook! 'change-major-mode-hook 'visual-line-mode)
 
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
