@@ -470,6 +470,8 @@ debugging scala
 
 (add-hook! 'buffer-list-update-hook 'visual-line-mode)
 (add-hook! 'dired-after-readin-hook 'visual-line-mode)
+(setq! visual-line-mode t)
+
 
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
