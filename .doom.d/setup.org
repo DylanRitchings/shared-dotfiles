@@ -465,10 +465,11 @@ debugging scala
 
 * QUICK FIX
 #+BEGIN_SRC emacs-lisp
-(after! get-buffer-create
-(visual-line-mode))
+;;(after! get-buffer-create
+;;(visual-line-mode))
 
-;;(add-hook! 'prog-mode-hook 'visual-line-mode)
+(add-hook! 'yas-global-hook 'visual-line-mode)
+
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
 ;; (push "*format-all-errors*" popwin:special-display-config)
