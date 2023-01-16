@@ -1,7 +1,7 @@
 ## Installation
 ```bash
-git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" init
-export GIT_DIR="$HOME/.dotfiles"
+git --git-dir="$HOME/.dotfiles/shared" --work-tree="$HOME" init
+export GIT_DIR="$HOME/.dotfiles/shared"
 
 cd $HOME/.dotfiles
 git config status.showUntrackedFiles no
