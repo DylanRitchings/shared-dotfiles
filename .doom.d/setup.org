@@ -469,7 +469,7 @@ debugging scala
 ;;(visual-line-mode))
 
 (add-hook! 'buffer-list-update-hook 'visual-line-mode)
-(add-hook! 'dired-mode-hook 'visual-line-mode)
+(add-hook! 'ranger-mode-hook 'visual-line-mode)
 
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
