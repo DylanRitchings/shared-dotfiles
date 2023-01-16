@@ -465,7 +465,9 @@ debugging scala
 
 * QUICK FIX
 #+BEGIN_SRC emacs-lisp
-(visual-line-mode)
+(after! get-buffer-create
+(visual-line-mode))
+
 ;;(add-hook! 'prog-mode-hook 'visual-line-mode)
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
@@ -518,4 +520,3 @@ debugging scala
 
 ;; (setq! format-on-save-enabled-modes ((not emacs-lisp-mode sql-mode tex-mode latex-mode org-msg-edit-mode c-mode)))
 #+END_SRC
-test
