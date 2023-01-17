@@ -470,7 +470,7 @@ debugging scala
 
 ;;(add-hook! 'buffer-list-update-hook 'global-visual-line-mode)
 ;;(add-hook! 'dired-after-readin-hook 'global-visual-line-mode)
-(add-hook! 'emacs-startup-hook 'global-visual-line-mode)
+(add-hook! 'emacs-startup-hook 'global-visual-line-mode t)
 
 
 (add-hook! 'prog-mode-hook 'popwin-mode)
