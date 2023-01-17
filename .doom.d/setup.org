@@ -5,24 +5,38 @@
 
 (remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
-(define-key evil-motion-state-map "j" 'evil-backward-char)
-(define-key evil-motion-state-map ";" 'evil-forward-char)
-(define-key evil-motion-state-map "k" 'evil-next-line)
-(define-key evil-motion-state-map "l" 'evil-previous-line)
+(defun check-os ()
+  (interactive)
+  (shell-command-to-string "echo $OSTYPE")
+                )
+(setq ostype
+  (substring
+    (shell-command-to-string "echo $OSTYPE")
+   0 -1))
 
-(map! :after ranger
-      :map ranger-mode-map
-      "j" 'ranger-up-directory
-      ";" 'ranger-find-file
-      "k" 'ranger-next-file
-      "l" 'ranger-prev-file)
+(if (not (string= ostype "linux-android"))
+    (progn
 
-(map! :after magit
-      :map magit-mode-map
-      "j" 'magit-dispatch
-      ";" 'magit-log
-      "k" 'evil-next-visual-line
-      "l" 'evil-previous-visual-line)
+    (define-key evil-motion-state-map "j" 'evil-backward-char)
+    (define-key evil-motion-state-map ";" 'evil-forward-char)
+    (define-key evil-motion-state-map "k" 'evil-next-line)
+    (define-key evil-motion-state-map "l" 'evil-previous-line)
+
+    (map! :after ranger
+        :map ranger-mode-map
+        "j" 'ranger-up-directory
+        ";" 'ranger-find-file
+        "k" 'ranger-next-file
+        "l" 'ranger-prev-file)
+
+    (map! :after magit
+        :map magit-mode-map
+        "j" 'magit-dispatch
+        ";" 'magit-log
+        "k" 'evil-next-visual-line
+        "l" 'evil-previous-visual-line)
+
+))
 
 (map!
       :n "C-M-s-j" #'evil-backward-paragraph
@@ -478,6 +492,7 @@ debugging scala
 
 
 
+
 (add-hook! 'prog-mode-hook 'popwin-mode)
 
 ;; (push "*format-all-errors*" popwin:special-display-config)
@@ -519,6 +534,7 @@ debugging scala
 
 
 ;;CSV mode
+
 (add-hook! 'csv-mode-hook
            'csv-align-mode
            'csv-header-line)
