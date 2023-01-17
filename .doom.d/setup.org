@@ -2,8 +2,6 @@
 
 ** Movement
 #+BEGIN_SRC emacs-lisp
-(add-hook! 'emacs-startup-hook 'global-visual-line-mode t)
-
 
 (remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
@@ -475,6 +473,8 @@ debugging scala
 ;;(add-hook! 'dired-after-readin-hook 'global-visual-line-mode)
 ;;(after! company
 ;;(global-visual-line-mode))
+(add-hook! 'emacs-startup-hook 'global-visual-line-mode t)
+
 
 
 
