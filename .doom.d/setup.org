@@ -5,10 +5,6 @@
 
 (remove-hook 'doom-first-input-hook #'evil-snipe-mode)
 
-(defun check-os ()
-  (interactive)
-  (shell-command-to-string "echo $OSTYPE")
-                )
 (setq ostype
   (substring
     (shell-command-to-string "echo $OSTYPE")
