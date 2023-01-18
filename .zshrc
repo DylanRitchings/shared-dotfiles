@@ -78,7 +78,7 @@ function 'sudoe' {
 }
 
 function e {
-  screen -dm emacs $1
+  emacs $1
     }
 function ec {
   emacsclient -n $1
