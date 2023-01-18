@@ -482,7 +482,7 @@ debugging scala
      'face 'doom-dashboard-banner)))
 
 (defun emacs ()
-  (let* ((banner '("Emacs"))
+  (let* ((banner '(" E M A C S "))
          (longest-line (apply #'max (mapcar #'length banner))))
     (put-text-property
      (point)
@@ -494,7 +494,9 @@ debugging scala
      'face 'doom-dashboard-banner)))
 
 (setq +doom-dashboard-ascii-banner-fn #'ascii-art)
-
+(if (string= ostype "linux-android")
+    (setq +doom-dashboard-ascii-banner-fn #'emacs)
+)
 
 (assoc-delete-all "Open org-agenda" +doom-dashboard-menu-sections)
 (assoc-delete-all "Recently opened files" +doom-dashboard-menu-sections)
