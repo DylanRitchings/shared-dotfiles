@@ -245,8 +245,6 @@
 
 #+begin_SRC emacs-lisp
 
-
-
 (defun doom/iterm2-run (command)
   "Open a new tab in the current iTerm2 window, change to the current directory, and run COMMAND asynchronously, keeping the iTerm2 window open after the command finishes."
   (interactive "sCommand to run: ")
@@ -264,9 +262,6 @@
                                    end tell
                                end tell
                            end tell"))))
-
-
-
 
 #+end_SRC
 * Package configs
@@ -462,6 +457,10 @@ debugging scala
 (add-hook! 'prog-mode-hook 'rainbow-delimiters-mode)
 #+end_src
 
+** Startup
+#+begin_src emacs-lisp
+(setq fancy-splash-image "~/.doom.d/emacs-logo.png")
+#+end_src
 
 * Printing
 #+begin_src emacs-lisp
