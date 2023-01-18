@@ -462,35 +462,15 @@ debugging scala
 
 (defun ascii-art ()
   (let* ((banner '(
-"                                                                                "
-"                                                ##((((((((##                    "
-"                                                 &((((((((((((((%               "
-"                                                        &(((((((((              "
-"                       (((((((((((((((((((((((((((%%%%%%(((((((((((             "
-"                      #((((((((((((((((((((((((((((((((((((((((((((             "
-"                       %((((((((((((((((((((((((((((((((((((((((((              "
-"                         ((((((((((                       ####                  "
-"                           (((((((((                                            "
-"                             (((((((((&                                         "
-"                                ((((((((((                                      "
-"                                   ((((((((((                                   "
-"                           (((&        (((((((((                                "
-"               #(((((((((((((((((((((((((((((((((((                             "
-"          %(((((((((((((((((((((((((((((((((((((((((((%                         "
-"        #((((((((((((((((((((((((((((&&&&                                       "
-"       &((((((((((((((((((((&                                                   "
-"        (((((((((((((((((                                                       "
-"         (((((((((((((((                                                        "
-"           #(((((((((((((                                                       "
-"              ((((((((((((((&                                                   "
-"                 &((((((((((((((((%                                             "
-"                      #((((((((((((((((((((&                                    "
-"                           (((((((((((((((((((((((((((                          "
-"                                      ((((((((((((((((((((((                    "
-"                                               ((((((((((((((((                 "
-"                                           (((((((((((((((((                    "
-"                                                                                "
-                                                ))
+"______ _____ ____ ___ ___"
+  "`  _  V  _  V  _ \\|  V  ´"
+  "| | | | | | | | | |     |"
+  "| | | | | | | | | | . . |"
+  "| |/ / \\ \\| | |/ /\\ |V| |"
+  "|   /   \\__/ \\__/  \\| | |"
+  "|  /                ' | |"
+  "| /     E M A C S     \\ |"
+  "´´                     ``"                                                ))
          (longest-line (apply #'max (mapcar #'length banner))))
     (put-text-property
      (point)
@@ -513,7 +493,58 @@ debugging scala
                "\n"))
      'face 'doom-dashboard-banner)))
 
-(setq +doom-dashboard-ascii-banner-fn #'emacs)
+(setq +doom-dashboard-ascii-banner-fn #'ascii-art)
+
+
+(assoc-delete-all "Open org-agenda" +doom-dashboard-menu-sections)
+(assoc-delete-all "Recently opened files" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open project" +doom-dashboard-menu-sections)
+(assoc-delete-all "Jump to bookmark" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
+
+(add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda"
+     :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+     :when (fboundp 'org-agenda)
+     :action org-agenda))
+
+(add-to-list '+doom-dashboard-menu-sections
+    '("recent files"
+     :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+     :action recentf-open-files))
+
+(add-to-list '+doom-dashboard-menu-sections
+'("project"
+     :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+     :action projectile-switch-project))
+
+(add-to-list '+doom-dashboard-menu-sections
+'("bookmark"
+     :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+     :action bookmark-jump))
+
+(add-to-list '+doom-dashboard-menu-sections
+'("private config"
+     :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+     :when (file-directory-p doom-user-dir)
+     :action doom/open-private-config))
+
+(add-to-list '+doom-dashboard-menu-sections
+'("documentation"
+     :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+     :action doom/help))
+
+(setq! +doom-dashboard--width 80)
+
+  ;; '("last session"
+  ;;    :icon (all-the-icons-octicon "history" :face 'doom-dashboard-menu-title)
+  ;;    :when (cond ((modulep! :ui workspaces)
+  ;;                 (file-exists-p (expand-file-name persp-auto-save-fname persp-save-dir)))
+  ;;                ((require 'desktop nil t)
+  ;;                 (file-exists-p (desktop-full-file-name))))
+  ;;    :face (:inherit (doom-dashboard-menu-title bold))
+  ;;    :action doom/quickload-session))
 
 ;;(setq fancy-splash-image "~/.doom.d/emacs-logo.png")
 #+end_src
