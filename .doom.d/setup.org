@@ -496,6 +496,7 @@ debugging scala
 (setq! +doom-dashboard-banner-padding '(0 . 0))
 
 (setq +doom-dashboard-ascii-banner-fn #'ascii-art)
+
 (if (string= ostype "linux-android")
     (setq +doom-dashboard-ascii-banner-fn #'emacs)
 )
@@ -507,44 +508,96 @@ debugging scala
 (assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
 (assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
 
-(add-to-list '+doom-dashboard-menu-sections
-'("documentation - SPC h d h"
-     :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
-     :key ""
-     :action doom/help))
 
-(add-to-list '+doom-dashboard-menu-sections
-'("private config - SPC f P"
-     :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
-     :key ""
-     :when (file-directory-p doom-user-dir)
-     :action doom/open-private-config))
 
-(add-to-list '+doom-dashboard-menu-sections
-'("bookmark - SPC RET"
-     :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
-     :key ""
-     :action bookmark-jump))
+(setq! dashboard-key "")
+(if (string= ostype "linux-android")
+    (setq! dashboard-key "\n")
+)
 
-(add-to-list '+doom-dashboard-menu-sections
-'("project - SPC p p"
-     :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
-     :key ""
-     :action projectile-switch-project))
+(if (string= ostype "linux-android")
+    (progn
 
-(add-to-list '+doom-dashboard-menu-sections
-    '("recent files - SPC f r"
-     :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
-     :key ""
-     :action recentf-open-files))
+    (add-to-list '+doom-dashboard-menu-sections
+    '("documentation"
+        :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action doom/help))
 
-(add-to-list '+doom-dashboard-menu-sections
-    '("org-agenda - SPC o A"
-     :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-     :key ""
-     :when (fboundp 'org-agenda)
-     :action org-agenda))
+    (add-to-list '+doom-dashboard-menu-sections
+    '("config"
+        :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+        :key ""
+        :when (file-directory-p doom-user-dir)
+        :action doom/open-private-config))
 
+    (add-to-list '+doom-dashboard-menu-sections
+    '("bookmark"
+        :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action bookmark-jump))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action projectile-switch-project))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("recent files"
+        :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action recentf-open-files))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda "
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key ""
+        :when (fboundp 'org-agenda)
+        :action org-agenda))))
+
+
+(if (not (string= ostype "linux-android"))
+    (progn
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("documentation"
+        :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+        :key "SPC h d h"
+        :action doom/help))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("config"
+        :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+        :key "SPC f P"
+        :when (file-directory-p doom-user-dir)
+        :action doom/open-private-config))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("bookmark"
+        :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+        :key "SPC RET"
+        :action bookmark-jump))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key "SPC p p"
+        :action projectile-switch-project))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("recent files"
+        :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+        :key "SPC f r"
+        :action recentf-open-files))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda"
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key "SPC o A"
+        :when (fboundp 'org-agenda)
+        :action org-agenda))
+    ))
 
 
 
@@ -561,6 +614,8 @@ debugging scala
 
 ;;(setq fancy-splash-image "~/.doom.d/emacs-logo.png")
 #+end_src
+
+#+RESULTS:
 
 * Printing
 #+begin_src emacs-lisp
