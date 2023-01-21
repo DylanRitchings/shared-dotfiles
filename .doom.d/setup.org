@@ -519,10 +519,23 @@ debugging scala
     (progn
 
     (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda "
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key ""
+        :when (fboundp 'org-agenda)
+        :action org-agenda))
+
+    (add-to-list '+doom-dashboard-menu-sections
     '("documentation"
         :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
         :key ""
         :action doom/help))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action projectile-switch-project))
 
     (add-to-list '+doom-dashboard-menu-sections
     '("config"
@@ -538,33 +551,35 @@ debugging scala
         :action bookmark-jump))
 
     (add-to-list '+doom-dashboard-menu-sections
-    '("project"
-        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
-        :key ""
-        :action projectile-switch-project))
-
-    (add-to-list '+doom-dashboard-menu-sections
     '("recent files"
         :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
         :key ""
         :action recentf-open-files))
 
-    (add-to-list '+doom-dashboard-menu-sections
-    '("org-agenda "
-        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-        :key ""
-        :when (fboundp 'org-agenda)
-        :action org-agenda))))
+    ))
 
 
 (if (not (string= ostype "linux-android"))
     (progn
 
     (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda"
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key "SPC o A"
+        :when (fboundp 'org-agenda)
+        :action org-agenda))
+
+    (add-to-list '+doom-dashboard-menu-sections
     '("documentation"
         :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
         :key "SPC h d h"
         :action doom/help))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key "SPC p p"
+        :action projectile-switch-project))
 
     (add-to-list '+doom-dashboard-menu-sections
     '("config"
@@ -580,23 +595,11 @@ debugging scala
         :action bookmark-jump))
 
     (add-to-list '+doom-dashboard-menu-sections
-    '("project"
-        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
-        :key "SPC p p"
-        :action projectile-switch-project))
-
-    (add-to-list '+doom-dashboard-menu-sections
     '("recent files"
         :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
         :key "SPC f r"
         :action recentf-open-files))
 
-    (add-to-list '+doom-dashboard-menu-sections
-    '("org-agenda"
-        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
-        :key "SPC o A"
-        :when (fboundp 'org-agenda)
-        :action org-agenda))
     ))
 
 
