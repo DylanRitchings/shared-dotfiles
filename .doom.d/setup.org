@@ -1,3 +1,86 @@
+
+* QUICK FIX
+#+BEGIN_SRC emacs-lisp
+;;(after! get-buffer-create
+;;(visual-line-mode))
+
+;;(add-hook! 'buffer-list-update-hook 'global-visual-line-mode)
+;;(add-hook! 'dired-after-readin-hook 'global-visual-line-mode)
+;;(after! company
+;;(global-visual-line-mode))
+(add-hook! 'emacs-startup-hook 'global-visual-line-mode t)
+
+
+
+
+
+(add-hook! 'prog-mode-hook 'popwin-mode)
+
+;; (push "*format-all-errors*" popwin:special-display-config)
+;; (push '(dired-mode :position top) popwin:special-display-config)
+;; ;; vc
+;; (push "*vc-diff*" popwin:special-display-config)
+;; (push "*vc-change-log*" popwin:special-display-config)
+
+(setq! compilation-window-height 15)
+
+;; ;; Helper for compilation. Close the compilation window if
+;; ;; there was no error at all. (emacs wiki)
+;; (defun compilation-exit-autoclose (status code msg)
+;;   ;; If M-x compile exists with a 0
+;;   (when (and (eq status 'exit) (zerop code))
+;;     ;; then bury the *compilation* buffer, so that C-x b doesn't go there
+;;     (bury-buffer)
+;;     ;; and delete the *compilation* window
+;;     (delete-window (get-buffer-window (get-buffer "*format-all-errors*"))))
+;;   ;; Always return the anticipated result of compilation-exit-message-function
+;;   (cons msg code))
+;; ;; Specify my function (maybe I should have done a lambda function)
+;; (setq! compilation-exit-message-function 'compilation-exit-autoclose)
+
+;; start-server
+(add-hook! 'after-init-hook 'server-mode)
+
+
+(map! :leader
+      (:prefix ("w")
+      :desc "Horizontal window"
+      "h" #'split-window-below)
+      )
+
+(map! :after evil
+      :n "(" #'backward-sexp
+      :n ")" #'forward-sexp)
+
+
+
+;;CSV mode
+
+(add-hook! 'csv-mode-hook
+           'csv-align-mode
+           'csv-header-line)
+
+(setq! whitespace-style '(trailing tabs newline tab-mark newline-mark))
+
+(setq! lsp-dired-mode 't)
+
+;; (setq! format-on-save-enabled-modes ((not emacs-lisp-mode sql-mode tex-mode latex-mode org-msg-edit-mode c-mode)))
+#+END_SRC
+** Straight package manager
+#+begin_src emacs-lisp
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+#+end_src
 * Basic and Navigation Bindings
 
 ** Movement
@@ -294,6 +377,7 @@
 
 ** LSP
 *** UI
+
 #+BEGIN_SRC emacs-lisp
 (after! lsp-ui
 (setq! lsp-ui-sideline t)
@@ -319,74 +403,106 @@
 (add-hook! 'terraform-mode 'lsp-mode)
 (add-hook! 'python-mode 'lsp-mode)
 #+END_SRC
-
-
 *** Terraform
-** Company #TODO Get AWS company working with  fuzzy
-*** Setup
+** Company
+#+begin_src emacs-lisp
+;; (setq! company-idle-delay 0)
+;; (setq! company-minimum-prefix-length 1)
+
+;; Add extensions
+
+;; Use Dabbrev with Corfu!
+(use-package! dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  ;; Other useful Dabbrev configurations.
+  :custom
+  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+;; (setq-local completion-at-point-functions
+;;             (list (cape-super-capf
+;;                    #'eglot-completion-at-point
+;;                    (cape-company-to-capf #'company-yasnippet))))
+
+(use-package! cape
+
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions (cape-company-to-capf #'company-yasnippet))
+  )
+
+;; (use-package orderless
+;;   :straight t
+;;   :ensure t
+;;   :commands (orderless-filter))
+
+;; (use-package flx-rs
+;;   :ensure t
+;;   :straight
+;;   (flx-rs
+;;    :repo "jcs-elpa/flx-rs"
+;;    :fetcher github
+;;    :files (:defaults "bin"))
+;;   :config
+;;   (setq fussy-score-fn 'flx-rs-score)
+;;   (flx-rs-load-dyn))
+
+;; (use-package fussy
+;;   :ensure t
+;;   :straight
+;;   (fussy :type git :host github :repo "jojojames/fussy")
+;;   :config
+;;   (setq fussy-score-fn 'flx-rs-score)
+;;   (setq fussy-filter-fn 'fussy-filter-orderless-flex)
+
+;;   (push 'fussy completion-styles)
+;;   (setq
+;;    ;; For example, project-find-file uses 'project-files which uses
+;;    ;; substring completion by default. Set to nil to make sure it's using
+;;    ;; flx.
+;;    completion-category-defaults nil
+;;    completion-category-overrides nil)
+
+;; (advice-add 'corfu--capf-wrapper :before 'fussy-wipe-cache)
+
+;; (add-hook 'corfu-mode-hook
+;;           (lambda ()
+;;             (setq-local fussy-max-candidate-limit 5000
+;;                         fussy-default-regex-fn 'fussy-pattern-first-letter
+;;                         fussy-prefer-prefix nil)))
+
+(use-package! corfu
+  :custom
+  (corfu-auto t)                 ;; Enable auto completion
+  (corfu-quit-no-match 'separator)
+  (corfu-auto-prefix 0)
+  (corfu-auto-delay 0)
+
+  :init
+  (global-corfu-mode))
+
+(use-package! emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+  (setq tab-always-indent 'complete))
+
+  #+end_src
+*** Backends
 #+BEGIN_SRC emacs-lisp
 (setq! company-backends
     '(
-      ;; (company-files :with company-yasnippet company-terraform company-tabnine)
-      (company-capf :with company-yasnippet  company-tabnine)
-;;       (company-dabbrev-code company-gtags company-etags company-keywords :with company-yasnippet company-terraform company-tabnine)
-;;       (company-dabbrev :with company-yasnippet company-terraform company-tabnine)
+      (company-capf :with company-yasnippet)
       ))
-(company-quickhelp-mode)
-;; (setq! global-company-mode t)
+
 (add-hook! 'lsp-managed-mode-hook (lambda () (setq-local company-backends )))
 (company-terraform-init)
-;; (add-hook! 'terraform-mode (lambda () (setq-local company-backends '((company-capf :with company-terraform)))))
-(add-hook! 'after-init-hook 'company-flx-mode)
-(add-hook! 'after-init-hook 'global-company-mode)
-;; (after! terraform-mode
-;;   company-terraform-init
-;;                 )
+;; (add-hook! 'after-init-hook 'company-flx-mode)
+;; (add-hook! 'after-init-hook 'global-company-mode)
 #+END_SRC
-*** Fuzzy
-#+BEGIN_SRC emacs-lisp
-;; (defun jcs--company-complete-selection--advice-around (fn)
-;;     "Advice execute around `company-complete-selection' command."
-;;     (let ((company-dabbrev-downcase t))
-;;       (call-interactively fn))
-;;     (advice-add 'company-complete-selection :around #'jcs--company-complete-selection--advice-around))
-
-;; (after! terraform-mode
-;; (setq! company-fuzzy-sorting-backend 'flx)
-
-;; (setq! company-minimum-prefix-length 1
-;;       company-idle-delay 0.0) ;; default is 0.2
-
-;; (map! :n "<tab>" 'company-capf)
-
-
-
-;; ;; (company-fuzzy-mode 1)
-
-;; ;; (after! doom-company
-;; ;;   (setq! company-fuzzy-mode 1)
-;; ;;   (add-hook! 'find-file-hook 'company-fuzzy-mode)
-;; ;; )
-;; (after! company
-;;   (setq! company-fuzzy-mode 1)
-;;   (add-hook! 'find-file-hook 'company-fuzzy-mode)
-;; )
-;; )
-;; ;; (add-hook! 'terraform-mode-hook 'company-fuzzy-mode)
-
-;; ;; (setq! global-company-mode t)
-
-;; ;; (after! terraform-mode
-;; ;;   (company-fuzzy-mode))
-;; ;; (company-fuzzy-mode)
-;; ;; (company-fuzzy-mode)
-#+END_SRC
-
-** Company
-#+begin_src emacs-lisp
-(setq! company-idle-delay 0)
-(setq! company-minimum-prefix-length 1)
-#+end_src
 * Languages
 ** Scala
 *** sbt mode
@@ -434,7 +550,12 @@ debugging scala
 (setq! flycheck-tflint-variable-files '("variables.tf"))
 
 (setq! flycheck-terraform-tflint-executable "/opt/homebrew/bin/tflint")
+
 ;;                 )
+#+end_src
+** Python
+#+begin_src emacs-lisp
+(elpy-enable)
 #+end_src
 
 * Visual
@@ -630,71 +751,3 @@ debugging scala
               lpr-switches))
 
 #+end_src
-
-* QUICK FIX
-#+BEGIN_SRC emacs-lisp
-;;(after! get-buffer-create
-;;(visual-line-mode))
-
-;;(add-hook! 'buffer-list-update-hook 'global-visual-line-mode)
-;;(add-hook! 'dired-after-readin-hook 'global-visual-line-mode)
-;;(after! company
-;;(global-visual-line-mode))
-(add-hook! 'emacs-startup-hook 'global-visual-line-mode t)
-
-
-
-
-
-(add-hook! 'prog-mode-hook 'popwin-mode)
-
-;; (push "*format-all-errors*" popwin:special-display-config)
-;; (push '(dired-mode :position top) popwin:special-display-config)
-;; ;; vc
-;; (push "*vc-diff*" popwin:special-display-config)
-;; (push "*vc-change-log*" popwin:special-display-config)
-
-(setq! compilation-window-height 15)
-
-;; ;; Helper for compilation. Close the compilation window if
-;; ;; there was no error at all. (emacs wiki)
-;; (defun compilation-exit-autoclose (status code msg)
-;;   ;; If M-x compile exists with a 0
-;;   (when (and (eq status 'exit) (zerop code))
-;;     ;; then bury the *compilation* buffer, so that C-x b doesn't go there
-;;     (bury-buffer)
-;;     ;; and delete the *compilation* window
-;;     (delete-window (get-buffer-window (get-buffer "*format-all-errors*"))))
-;;   ;; Always return the anticipated result of compilation-exit-message-function
-;;   (cons msg code))
-;; ;; Specify my function (maybe I should have done a lambda function)
-;; (setq! compilation-exit-message-function 'compilation-exit-autoclose)
-
-;; start-server
-(add-hook! 'after-init-hook 'server-mode)
-
-
-(map! :leader
-      (:prefix ("w")
-      :desc "Horizontal window"
-      "h" #'split-window-below)
-      )
-
-(map! :after evil
-      :n "(" #'backward-sexp
-      :n ")" #'forward-sexp)
-
-
-
-;;CSV mode
-
-(add-hook! 'csv-mode-hook
-           'csv-align-mode
-           'csv-header-line)
-
-(setq! whitespace-style '(trailing tabs newline tab-mark newline-mark))
-
-(setq! lsp-dired-mode 't)
-
-;; (setq! format-on-save-enabled-modes ((not emacs-lisp-mode sql-mode tex-mode latex-mode org-msg-edit-mode c-mode)))
-#+END_SRC
