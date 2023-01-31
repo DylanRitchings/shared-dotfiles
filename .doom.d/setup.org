@@ -476,7 +476,7 @@
 
 (use-package! corfu
   :custom
-  (corfu-auto t)                 ;; Enable auto completion
+  ;; (corfu-auto f)                 ;; Enable auto completion
   (corfu-quit-no-match 'separator)
   (corfu-auto-prefix 0)
   (corfu-auto-delay 0)
@@ -487,8 +487,7 @@
 (use-package! emacs
   :init
   ;; TAB cycle if there are only few candidates
-  (setq completion-cycle-threshold 3)
-  (setq tab-always-indent 'complete))
+  (setq completion-cycle-threshold 3))
 
   #+end_src
 *** Backends
