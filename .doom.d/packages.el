@@ -57,13 +57,14 @@
 (add-to-list 'auto-mode-alist '("\\.ps1\\'" . powershell-mode))
 
 (package! company-terraform)
-(package! company-fuzzy)
-(package! company-quickhelp)
+;; (package! company-fuzzy)
+;; (package! company-quickhelp)
 (package! company-tabnine)
 (package! company-lsp)
-(package! company-box)
+;; (package! company-box)
 (package! flx)
-(package! company-flx)
+(package! fzf-native)
+;; (package! company-flx)
 
 (package! centaur-tabs)
 
@@ -97,3 +98,26 @@
 
 
 (package! org-download)
+
+
+(package! elpy)
+
+(package! corfu)
+
+
+
+(package! orderless)
+(package! dabbrev)
+(package! cape)
+(package! hotfuzz)
+(package! flx-rs)
+(package! fussy)
+;; (package! straight)
+
+(package! transient
+      :pin "c2bdf7e12c530eb85476d3aef317eb2941ab9440"
+      :recipe (:host github :repo "magit/transient"))
+
+(package! with-editor
+          :pin "bbc60f68ac190f02da8a100b6fb67cf1c27c53ab"
+          :recipe (:host github :repo "magit/with-editor"))
