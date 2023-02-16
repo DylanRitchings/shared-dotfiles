@@ -100,7 +100,7 @@
 (package! org-download)
 
 
- (package! elpy)
+(package! elpy)
 
 (package! corfu)
 
