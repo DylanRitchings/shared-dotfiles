@@ -314,5 +314,378 @@
                            end tell"))))
 
 #+end_SRC
+* Package configs
+** Centaur tabs
+#+BEGIN_SRC emacs-lisp
+(setq! centaur-tabs-style "bar"
+      centaur-tabs-headline-match t
+      centaur-tabs-set-bar 'over
+      centaur-tabs-set-icons t
+      centaur-tabs-set-modified-marker t
+      centaur-tabs-modifier-marker "~"
+      centaur-tabs-gray-out-icons t)
+(after! centaur-tabs
+  (centaur-tabs-group-by-projectile-project))
+(centaur-tabs-mode t)
+#+END_SRC
+
+*** Bindings
+#+begin_SRC emacs-lisp
+(map! :leader
+      :desc "tab forward"
+      "l" #'centaur-tabs-forward
+      :desc "tab backwards"
+      "k" #'centaur-tabs-backward
+      :desc "buffer-forward"
+      ";" #'next-buffer
+      :desc "buffer-backwards"
+      "j" #'previous-buffer
+      )
+#+end_SRC
+
+** LSP
+*** UI
+
+#+BEGIN_SRC emacs-lisp
+(after! lsp-ui
+(setq! lsp-ui-sideline t)
+(setq! lsp-ui-sideline-show-hover t)
+(setq! lsp-ui-sideline-enable t)
+(setq! lsp-ui-doc-enable t)
+(setq! lsp-ui-doc-show-with-cursor t)
+(setq! lsp-ui-doc-position "top")
+(setq! lsp-ui-flycheck-enable t)
+(setq! lsp-ui-sideline-show-flycheck t)
+(setq! lsp-use-plists t)
+)
+#+END_SRC
+
+*** Hook
+#+BEGIN_SRC emacs-lisp
+(defun dotfiles--lsp-deferred-if-supported ()
+  "Run `lsp-deferred' if it's a supported mode."
+  (unless (derived-mode-p 'emacs-lisp-mode)
+    (lsp-deferred)))
+
+(setq! lsp-log-io nil)
+(add-hook! 'prog-mode-hook 'dotfiles--lsp-deferred-if-supported)
+(add-hook! 'terraform-mode 'lsp-mode)
+(add-hook! 'python-mode 'lsp-mode)
+#+END_SRC
+
+*** Terraform
+** Company/corfu WIP
+#+begin_src emacs-lisp
+;; Add extensions
+
+;; Use Dabbrev with Corfu!
+(use-package! dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  ;; Other useful Dabbrev configurations.
+  :custom
+  (dabbrev-ignored-buffer-regexps '("\\.\\(?:pdf\\|jpe?g\\|png\\)\\'")))
+
+(use-package! cape
+  :init
+  ;; Add `completion-at-point-functions', used by `completion-at-point'.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions (cape-company-to-capf #'company-yasnippet))
+  )
+(setq! corfu-auto t)
+(setq! corfu-quit-no-match 'separator)
+(setq! corfu-auto-prefix 0)
+(setq! corfu-auto-delay 0)
+
+;; (use-package! corfu
+;;   :custom
+;;   (corfu-auto t)                 ;; Enable auto completion
+;;   (corfu-quit-no-match 'separator)
 
 
+;;   :init
+;;   (global-corfu-mode)
+;;   )
+
+;; ;; ;; (use-package! emacs
+;; ;; ;;   :init
+;; ;; ;;   ;; TAB cycle if there are only few candidates
+;; ;; ;;   (setq completion-cycle-threshold 3))
+
+;; ;; ;;ENTER IGNORE
+;; ;; (after! company
+
+;; ;;   ;; <return> is for windowed Emacs; RET is for terminal Emacs
+;; ;;   (dolist (key '("<return>" "RET"))
+;; ;;     ;; Here we are using an advanced feature of define-key that lets
+;; ;;     ;; us pass an "extended menu item" instead of an interactive
+;; ;;     ;; function. Doing this allows RET to regain its usual
+;; ;;     ;; functionality when the user has not explicitly interacted with
+;; ;;     ;; Company.
+;; ;;     (define-key company-active-map (kbd key)
+;; ;;       `(menu-item nil company-complete
+;; ;;                   :filter ,(lambda (cmd)
+;; ;;                              (when (company-explicit-action-p)
+;; ;;                                cmd)))))
+;; ;;   (define-key company-active-map (kbd "TAB") #'company-complete-selection)
+;; ;;   (define-key company-active-map (kbd "SPC") nil)
+
+;; ;;   ;; Company appears to override the above keymap based on company-auto-complete-chars.
+;; ;;   ;; Turning it off ensures we have full control.
+;; ;;   (setq company-auto-complete-chars nil)
+;; ;;                 )
+  #+end_src
+*** Backends
+#+BEGIN_SRC emacs-lisp
+(setq! company-backends
+    '(
+      (company-capf :with company-yasnippet)
+      ))
+
+(add-hook! 'lsp-managed-mode-hook (lambda () (setq-local company-backends )))
+(company-terraform-init)
+;; (add-hook! 'after-init-hook 'company-flx-mode)
+;; (add-hook! 'after-init-hook 'global-company-mode)
+#+END_SRC
+* Languages
+** Scala
+*** sbt mode
+#+begin_src emacs-lisp
+
+#+end_src
+*** metals
+debugging scala
+#+begin_src emacs-lisp
+(add-hook! scala-mode-hook dap-mode)
+(add-hook! scala-mode-hook dap-ui-mode)
+(setq! lsp-metals-super-method-lenses-enabled t)
+#+end_src
+*** run in zshell
+#+begin_src emacs-lisp
+(defun vterm-sbt ()
+  (interactive)
+  (split-window-below 55)
+  (other-window 1)
+  (vterm "/usr/bin/zsh" "sbt")
+  )
+
+(map! :leader
+      (:prefix ("z" . "Shell")
+      :desc "Run Scala"
+      "s" #'vterm-sbt))
+#+end_src
+** Terraform
+#+begin_src emacs-lisp
+(setq! lsp-enable-links t)
+(setq! lsp-semantic-tokens-enable t)
+(setq! lsp-semantic-tokens-honor-refresh-requests t)
+(setq! lsp-terraform-ls-enable-show-reference t)
+
+
+
+(setq! +terraform-runner "tfbuild IDV IDV")
+
+(setq! terraform-format-on-save-mode t)
+(setq! lsp-disabled-clients '(tfls))
+
+(setq! flycheck-tflint-variable-files '("variables.tf"))
+
+(setq! flycheck-terraform-tflint-executable "/opt/homebrew/bin/tflint")
+
+;;                 )
+#+end_src
+** Python
+#+begin_src emacs-lisp
+(elpy-enable)
+#+end_src
+** Java
+#+begin_src emacs-lisp
+
+#+end_src
+
+
+* Visual
+** Bookmark
+#+begin_src emacs-lisp
+(map! :leader
+      (:prefix ("v" . "Bookmark")
+      :mode lsp-ui-mode-map
+      :desc "toggle bookmark"
+      "b" #'bm-toggle
+      :desc "bookmark prev"
+      "k" #'bm-previous
+      :desc "bookmark next"
+      "l" #'bm-next
+))
+#+end_src
+
+** Rainbow
+#+begin_src emacs-lisp
+(add-hook! 'prog-mode-hook 'rainbow-delimiters-mode)
+#+end_src
+
+** Startup
+#+begin_src emacs-lisp
+
+(defun ascii-art ()
+  (let* ((banner '(
+"______ _____ ____ ___ ___"
+  "`  _  V  _  V  _ \\|  V  ´"
+  "| | | | | | | | | |     |"
+  "| | | | | | | | | | . . |"
+  "| |/ / \\ \\| | |/ /\\ |V| |"
+  "|   /   \\__/ \\__/  \\| | |"
+  "|  /                ' | |"
+  "| /     E M A C S     \\ |"
+  "´´                     ``"                                                ))
+         (longest-line (apply #'max (mapcar #'length banner))))
+    (put-text-property
+     (point)
+     (dolist (line banner (point))
+       (insert (+doom-dashboard--center
+                +doom-dashboard--width
+                (concat line (make-string (max 0 (- longest-line (length line))) 32)))
+               "\n"))
+     'face 'doom-dashboard-banner)))
+
+(defun emacs ()
+  (let* ((banner '(" E M A C S "))
+         (longest-line (apply #'max (mapcar #'length banner))))
+    (put-text-property
+     (point)
+     (dolist (line banner (point))
+       (insert (+doom-dashboard--center
+                +doom-dashboard--width
+                (concat line (make-string (max 0 (- longest-line (length line))) 32)))
+               "\n"))
+     'face 'doom-dashboard-banner)))
+
+(setq! +doom-dashboard-banner-padding '(0 . 0))
+
+(setq +doom-dashboard-ascii-banner-fn #'ascii-art)
+
+(if (string= ostype "linux-android")
+    (setq +doom-dashboard-ascii-banner-fn #'emacs)
+)
+
+(assoc-delete-all "Open org-agenda" +doom-dashboard-menu-sections)
+(assoc-delete-all "Recently opened files" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open project" +doom-dashboard-menu-sections)
+(assoc-delete-all "Jump to bookmark" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open private configuration" +doom-dashboard-menu-sections)
+(assoc-delete-all "Open documentation" +doom-dashboard-menu-sections)
+
+
+
+(setq! dashboard-key "")
+(if (string= ostype "linux-android")
+    (setq! dashboard-key "\n")
+)
+
+(if (string= ostype "linux-android")
+    (progn
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda "
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key ""
+        :when (fboundp 'org-agenda)
+        :action org-agenda))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("documentation"
+        :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action doom/help))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action projectile-switch-project))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("config"
+        :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+        :key ""
+        :when (file-directory-p doom-user-dir)
+        :action doom/open-private-config))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("bookmark"
+        :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action bookmark-jump))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("recent files"
+        :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+        :key ""
+        :action recentf-open-files))
+
+    ))
+
+
+(if (not (string= ostype "linux-android"))
+    (progn
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("org-agenda"
+        :icon (all-the-icons-octicon "calendar" :face 'doom-dashboard-menu-title)
+        :key "SPC o A"
+        :when (fboundp 'org-agenda)
+        :action org-agenda))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("documentation"
+        :icon (all-the-icons-octicon "book" :face 'doom-dashboard-menu-title)
+        :key "SPC h d h"
+        :action doom/help))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("project"
+        :icon (all-the-icons-octicon "briefcase" :face 'doom-dashboard-menu-title)
+        :key "SPC p p"
+        :action projectile-switch-project))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("config"
+        :icon (all-the-icons-octicon "tools" :face 'doom-dashboard-menu-title)
+        :key "SPC f P"
+        :when (file-directory-p doom-user-dir)
+        :action doom/open-private-config))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("bookmark"
+        :icon (all-the-icons-octicon "bookmark" :face 'doom-dashboard-menu-title)
+        :key "SPC RET"
+        :action bookmark-jump))
+
+    (add-to-list '+doom-dashboard-menu-sections
+    '("recent files"
+        :icon (all-the-icons-octicon "file-text" :face 'doom-dashboard-menu-title)
+        :key "SPC f r"
+        :action recentf-open-files))
+
+    ))
+
+
+
+(if (string= ostype "linux-android")
+    (setq! +doom-dashboard--width 30)
+)
+
+#+end_src
+
+* Printing
+#+begin_src emacs-lisp
+
+(setq! lpr-switches
+      (append '("-P" "DeskJet_2700"
+                "-o" "sides=two-sided-long-edge"
+                "-o" "number-up=2")
+              lpr-switches))
+
+#+end_src
