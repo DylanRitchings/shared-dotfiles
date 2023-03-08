@@ -242,6 +242,11 @@
 (after! save-buffer
   (set-buffer-file-coding-system unix))
 #+END_SRC
+** Multi edit/cursor
+#+begin_src emacs-lisp
+(map! :nv "s-d" #'evil-multiedit-match-all)
+
+#+end_src
 
 * Ease Of Use
 
