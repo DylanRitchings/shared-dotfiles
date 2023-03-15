@@ -444,13 +444,13 @@
   #+end_src
 *** Backends
 #+BEGIN_SRC emacs-lisp
-(setq! company-backends
-    '(
-      (company-capf :with company-yasnippet)
-      ))
+;; (setq! company-backends
+;;     '(
+;;       (company-capf :with company-yasnippet)
+;;       ))
 
-(add-hook! 'lsp-managed-mode-hook (lambda () (setq-local company-backends )))
-(company-terraform-init)
+;; (add-hook! 'lsp-managed-mode-hook (lambda () (setq-local company-backends )))
+;; (company-terraform-init)
 ;; (add-hook! 'after-init-hook 'company-flx-mode)
 ;; (add-hook! 'after-init-hook 'global-company-mode)
 #+END_SRC
