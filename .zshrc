@@ -54,6 +54,10 @@ alias roles='cat ~/.aws/config'
 
 alias src="source"
 
+
+alias gcane="git commit --amend --no-edit"
+
+
 alias vim='emacsclient -t'
 alias vi='emacsclient -t'
 
